@@ -1,0 +1,610 @@
+/* Kizz Web — tema "Blueprint Técnico": grafito oscuro + acero + ámbar de seguridad.
+   Pensado para un salón mayoritariamente de ingeniería: fondo tipo plano técnico
+   con grilla, tipografía geométrica para títulos (Space Grotesk) + sans técnica
+   para cuerpo (IBM Plex Sans). Sin degradados neón ni paletas genéricas de IA. */
+
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg: #12161c;
+  --bg-card: #1b212a;
+  --ink: #eef2f5;
+  --ink-soft: #97a3ae;
+  --steel: #4f83a3;
+  --steel-deep: #2e4d61;
+  --steel-tint: #1f2b34;
+  --amber: #f2a53a;
+  --amber-deep: #c97f1e;
+  --amber-tint: #35281a;
+  --correct-bg: #17311f;
+  --correct-ink: #7be3a0;
+  --incorrect-bg: #341f1c;
+  --incorrect-ink: #f3897a;
+  --grid-line: rgba(79, 131, 163, 0.14);
+  --card-radius: 12px;
+  --shadow-soft: 0 12px 32px -16px rgba(0, 0, 0, 0.65);
+  --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+/* padding-top fijo (no en vw) para que el contenido nunca quede debajo del logo
+   fijo en la esquina, sin importar cuánto se achique la ventana */
+#app {
+  min-height: 100vh;
+  padding: 90px 4vw 6vw;
+}
+
+@media (max-width: 640px) {
+  #app {
+    padding-top: 68px;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Grilla tipo plano técnico, de fondo en Sesión y Quiz */
+.view-sesion,
+.view-quiz {
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+    radial-gradient(circle at top right, #1a2029 0%, var(--bg) 60%);
+  background-size: 42px 42px, 42px 42px, 100% 100%;
+  min-height: 100vh;
+}
+
+/* Home deja el fondo transparente a propósito: ahí se ve la red de nodos
+   (#fx-nodos) que corre fija detrás de todo el documento. */
+.view-home {
+  background: transparent;
+  min-height: 100vh;
+}
+
+/* Canvas de la red de nodos tipo circuito (solo activo/visible en Home,
+   ver js/nodos.js). Fijo detrás del contenido; no intercepta clics. */
+#fx-nodos {
+  position: fixed;
+  inset: 0;
+  display: none;
+  pointer-events: none;
+}
+
+/* ---------- Home ---------- */
+
+.home-header {
+  text-align: center;
+  max-width: 900px;
+  margin: 2vh auto 5vh;
+}
+
+.home-eyebrow {
+  color: var(--amber);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  margin: 0 0 0.6rem;
+}
+
+.home-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  margin: 0 0 0.9rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.home-docente {
+  color: var(--steel);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  margin: 0 0 1.2rem;
+}
+
+.home-subtitle {
+  color: var(--ink-soft);
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  margin: 0;
+}
+
+.unidad-group {
+  max-width: 1200px;
+  margin: 0 auto 4vh;
+}
+
+.unidad-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  color: var(--ink);
+  border-left: 4px solid var(--amber);
+  padding-left: 0.85rem;
+  margin-bottom: 1.2rem;
+}
+
+.session-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.1rem;
+}
+
+.session-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  background: var(--bg-card);
+  border: 1px solid rgba(79, 131, 163, 0.28);
+  border-radius: var(--card-radius);
+  padding: 1.3rem 1.4rem;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.session-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--steel);
+}
+
+.session-card-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.session-card-tema {
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+/* Sesiones integradoras: mismo formato de tarjeta, borde acero para ubicarlas de un vistazo */
+.session-card.is-integradora {
+  background: var(--steel-tint);
+  border-color: var(--steel);
+}
+
+/* Sesiones de evaluación (PC, examen parcial/final): borde ámbar de alerta */
+.session-card.is-evaluacion {
+  background: var(--amber-tint);
+  border-color: var(--amber);
+}
+
+.session-card.is-evaluacion .session-card-num {
+  color: var(--amber);
+}
+
+/* Tarjeta de hito (examen final sin sesión propia): fija, no clicable, solo de referencia */
+.hito-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  background: var(--amber-deep);
+  color: #1c1206;
+  border: 1.5px dashed rgba(28, 18, 6, 0.45);
+  border-radius: var(--card-radius);
+  padding: 1.3rem 1.4rem;
+  box-shadow: var(--shadow-soft);
+  cursor: default;
+}
+
+.hito-codigo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.03em;
+}
+
+.hito-nombre {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.hito-detalle {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+/* ---------- Sesión ---------- */
+
+.back-link {
+  display: inline-block;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-bottom: 2vh;
+  font-size: 1.02rem;
+}
+
+.back-link:hover {
+  color: var(--amber);
+}
+
+.sesion-panel {
+  max-width: 900px;
+  margin: 8vh auto 0;
+  text-align: center;
+}
+
+.sesion-eyebrow {
+  color: var(--amber);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 1.05rem;
+  margin: 0 0 0.6rem;
+}
+
+.sesion-tema {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.7rem, 3.8vw, 2.8rem);
+  margin: 0 0 4vh;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.sesion-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  justify-content: center;
+}
+
+.momento-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  padding: 1.4rem 2.4rem;
+  border-radius: 10px;
+  min-width: 270px;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.momento-btn:hover {
+  transform: translateY(-3px);
+}
+
+.momento-inicio {
+  background: var(--steel);
+  color: #08141c;
+}
+
+.momento-cierre {
+  background: var(--amber);
+  color: #241505;
+}
+
+.momento-icon {
+  font-size: 1.2em;
+}
+
+/* ---------- Quiz ---------- */
+
+.quiz-panel {
+  max-width: 1100px;
+  margin: 2vh auto 0;
+  text-align: center;
+}
+
+.quiz-progreso {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  color: var(--amber);
+  margin: 0 0 0.6rem;
+}
+
+.quiz-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 0 3vh;
+}
+
+.quiz-dots span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(79, 131, 163, 0.35);
+}
+
+.quiz-dots span.is-active {
+  background: var(--amber);
+}
+
+.quiz-pregunta {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.4rem, 3vw, 2.3rem);
+  line-height: 1.35;
+  margin: 0 0 4.5vh;
+  color: var(--ink);
+}
+
+/* Grilla de tarjetas giratorias */
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.3rem;
+  margin-bottom: 3.5vh;
+  perspective: 1600px;
+}
+
+@media (max-width: 720px) {
+  .answer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.flip-card {
+  position: relative;
+  min-height: 130px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 130px;
+  text-align: left;
+  transition: transform 0.5s cubic-bezier(0.45, 0.05, 0.15, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.is-flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  inset: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: var(--card-radius);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.3rem 1.5rem;
+  cursor: pointer;
+}
+
+.flip-card-front {
+  background: var(--bg-card);
+  border: 1.5px solid var(--steel);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.flip-card:not(.is-flipped):hover .flip-card-front {
+  transform: translateY(-3px);
+  border-color: var(--amber);
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid transparent;
+}
+
+.flip-card-back.is-correct {
+  background: var(--correct-bg);
+  color: var(--correct-ink);
+}
+
+.flip-card-back.is-incorrect {
+  background: var(--incorrect-bg);
+  color: var(--incorrect-ink);
+}
+
+.tile-letra {
+  flex: none;
+  width: 2.3rem;
+  height: 2.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--steel-tint);
+  color: var(--steel);
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.tile-texto {
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.tile-texto .katex {
+  font-size: 1.05em;
+}
+
+.result-line {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+}
+
+.result-icon {
+  font-size: 1.3em;
+}
+
+.quiz-siguiente-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 4.5rem;
+}
+
+.siguiente-btn,
+.anterior-btn {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.02rem, 1.8vw, 1.25rem);
+  padding: 1rem 2.2rem;
+  border-radius: 10px;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.siguiente-btn {
+  border: none;
+  background: var(--amber);
+  color: #241505;
+  box-shadow: var(--shadow-soft);
+}
+
+.siguiente-btn:hover {
+  transform: translateY(-3px);
+}
+
+.anterior-btn {
+  border: 1.5px solid var(--steel);
+  background: transparent;
+  color: var(--steel);
+}
+
+.anterior-btn:hover {
+  transform: translateY(-3px);
+  background: var(--steel-tint);
+}
+
+/* ---------- Confeti (celebración al acertar) ---------- */
+
+.confetti-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 5;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0.95;
+  animation: confetti-burst 0.9s ease-out forwards;
+}
+
+@keyframes confetti-burst {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* ---------- Logo UTP + botón de pantalla completa (fijos, en todas las pantallas) ---------- */
+
+#brand-logo {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  height: 34px;
+  background: #eef2f5;
+  padding: 8px 12px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-soft);
+  z-index: 60;
+}
+
+@media (max-width: 640px) {
+  #brand-logo {
+    height: 24px;
+    padding: 6px 9px;
+    top: 10px;
+    left: 10px;
+  }
+}
+
+#btn-fullscreen {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 60;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid var(--steel);
+  background: var(--bg-card);
+  color: var(--amber);
+  font-size: 1.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+#btn-fullscreen:hover {
+  transform: translateY(-2px);
+  background: var(--steel-tint);
+}
+
+/* ---------- Cursores personalizados ---------- */
+/* Tema ingeniería: por defecto un engranaje (26x26); sobre elementos clicables,
+   una llave inglesa — mismo disco de fondo grafito/ámbar en ambos para que
+   se lean como un mismo sistema. */
+
+html {
+  cursor:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 34 34'><circle cx='17' cy='17' r='15' fill='%231b212a' stroke='%23f2a53a' stroke-width='1.6'/><g fill='%23f2a53a'><rect x='15' y='2.5' width='4' height='6' rx='1'/><rect x='15' y='25.5' width='4' height='6' rx='1'/><rect x='2.5' y='15' width='6' height='4' rx='1'/><rect x='25.5' y='15' width='6' height='4' rx='1'/><rect x='6.3' y='6.3' width='4' height='6' rx='1' transform='rotate(45 8.3 9.3)'/><rect x='23.7' y='6.3' width='4' height='6' rx='1' transform='rotate(-45 25.7 9.3)'/><rect x='6.3' y='21.7' width='4' height='6' rx='1' transform='rotate(-45 8.3 24.7)'/><rect x='23.7' y='21.7' width='4' height='6' rx='1' transform='rotate(45 25.7 24.7)'/></g><circle cx='17' cy='17' r='8.5' fill='%231b212a' stroke='%23f2a53a' stroke-width='1.6'/><circle cx='17' cy='17' r='3' fill='%23f2a53a'/></svg>")
+      13 13,
+    auto;
+}
+
+a,
+button,
+.flip-card,
+.session-card,
+.momento-btn,
+#btn-fullscreen {
+  cursor:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 34 34'><circle cx='17' cy='17' r='15' fill='%231b212a' stroke='%23f2a53a' stroke-width='1.6'/><line x1='10' y1='24' x2='24' y2='10' stroke='%23f2a53a' stroke-width='2.8' stroke-linecap='round'/><circle cx='9' cy='25' r='3.8' fill='none' stroke='%23f2a53a' stroke-width='2.6'/><circle cx='25' cy='9' r='3.8' fill='none' stroke='%23f2a53a' stroke-width='2.6'/></svg>")
+      13 13,
+    pointer;
+}
